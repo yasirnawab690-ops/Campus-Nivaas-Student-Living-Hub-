@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spot4Stay Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt"></script>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 10px rgba(0, 132, 255, 0.5), 0 0 20px rgba(0, 132, 255, 0.5), 0 0 30px rgba(0, 132, 255, 0.5);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(0, 132, 255, 1), 0 0 30px rgba(0, 132, 255, 1), 0 0 40px rgba(0, 132, 255, 1);
+      }
+      100% {
+        box-shadow: 0 0 10px rgba(0, 132, 255, 0.5), 0 0 20px rgba(0, 132, 255, 0.5), 0 0 30px rgba(0, 132, 255, 0.5);
+      }
+    }
+
+    .lamp-style {
+      position: relative; /* Set position to relative for absolute positioning of the flashlight */
+      background: radial-gradient(circle at 50% -20%, rgba(137, 207, 240, 0.9), rgba(30, 58, 138, 0.9));
+      box-shadow: 0px 0px 80px 20px rgba(0, 132, 255, 0.3);
+      animation: glow 1.5s infinite alternate; /* Add glowing animation */
+    }
+
+    .lamp-style::after {
+      content: '';
+      position: absolute;
+      top: 10%; /* Move the flashlight effect higher, closer to the top of the lamp */
+      left: 50%; /* Center the flashlight effect */
+      width: 300px; /* Width of the flashlight beam */
+      height: 300px; /* Height of the flashlight beam */
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, rgba(255, 215, 0, 0) 70%); /* Dark yellow sunshine gradient */
+      transform: translate(-50%, -50%); /* Center the flashlight effect */
+      pointer-events: none; /* Prevent interaction with the flashlight */
+      animation: flashlight 1.5s infinite alternate; /* Add animation for the flashlight effect */
+    }
+
+    @keyframes flashlight {
+      0% {
+        opacity: 0.5; /* Start with some opacity */
+      }
+      100% {
+        opacity: 0; /* Fade out */
+      }
+    }
+
+    .active-button {
+      background-color: #4c1d95 !important;
+      box-shadow: 0 0 15px #d8b4fe, 0 0 30px #7e22ce;
+      transform: scale(1.05);
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Click sound -->
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="lamp-style p-10 rounded-3xl shadow-lg text-white w-full max-w-md" data-tilt>
+      <h2 class="text-3xl font-bold text-center mb-6">
+        <span id="typed"></span>
+      </h2>
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-semibold">Email or Phone</label>
+          <input type="text" id="username" class="w-full p-2 rounded text-black" required />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-semibold">Password</label>
+          <input type="password" id="password" class="w-full p-2 rounded text-black" required />
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="text-sm">
+            <input type="checkbox" /> Remember Me
+          </label>
+          <a href="#" class="text-sm underline">Forgot Password?</a>
+        </div>
+        <button type="submit"
+          class="w-full bg-white text-blue-800 font-semibold py-2 px-4 rounded hover:bg-blue-100">
+          Login
+        </button>
+        <div class="flex items-center justify-center space-x-4 mt-4">
+          <button type="button" id="studentBtn" onclick="setLoginType('student')"
+            class="bg-purple-500 text-white px-4 py-2 rounded transition duration-300 transform hover:scale-105">
+            Student Login
+          </button>
+          <button type="button" id="adminBtn" onclick="setLoginType('admin')"
+            class="bg-purple-500 text-white px-4 py-2 rounded transition duration-300 transform hover:scale-105">
+            Admin Login
+          </button>
+        </div>
+        <p id="error" class="text-red-500 text-sm text-center mt-2"></p>
+      </form>
+      <p class="mt-6 text-center text-sm">
+        Not registered? <a href="#" class="underline">Create an account</a>
+      </p>
+      <div class="text-center mt-4 text-sm">
+        <button onclick="toggleLanguage()" class="underline">🌐 Switch Language</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentLanguage = 'english';
+    let loginType = 'student';
+
+    const translations = {
+      english: {
+        title: ["Welcome to Campus-Nivaas", "Student Living Hub "],
+        emailPhone: "Email or Phone",
+        password: "Password",
+        remember: "Remember Me",
+        forgot: "Forgot Password?",
+        login: "Login",
+        student: "Student Login",
+        admin: "Admin Login",
+        register: "Not registered? Create an account",
+        switch: "🌐 Switch to Hindi"
+      },
+      hindi: {
+        title: ["कैम्पस-निवास में आपका स्वागत है", "स्टूडेंट लिविंग हब"],
+        emailPhone: "ईमेल या फोन",
+        password: "पासवर्ड",
+        remember: "मुझे याद रखें",
+        forgot: "पासवर्ड भूल गए?",
+        login: "लॉग इन",
+        student: "छात्र लॉगिन",
+        admin: "व्यवस्थापक लॉगिन",
+        register: "पंजीकृत नहीं? खाता बनाएं",
+        switch: "🌐 अंग्रेजी पर स्विच करें"
+      }
+    };
+
+    function setLoginType(type) {
+      const clickSound = document.getElementById("clickSound");
+      clickSound.play();
+
+      loginType = type;
+      const passInput = document.getElementById("password");
+      const studentBtn = document.getElementById("studentBtn");
+      const adminBtn = document.getElementById("adminBtn");
+
+      if (type === 'student') {
+        studentBtn.classList.add("active-button");
+        adminBtn.classList.remove("active-button");
+        passInput.pattern = ".{6,}";
+        passInput.title = "Password must be at least 6 characters (any allowed)";
+        passInput.minLength = 6;
+      } else {
+        adminBtn.classList.add("active-button");
+        studentBtn.classList.remove("active-button");
+        passInput.removeAttribute("pattern");
+        passInput.removeAttribute("title");
+        passInput.removeAttribute("minlength");
+      }
+    }
+
+    function toggleLanguage() {
+      currentLanguage = currentLanguage === 'english' ? 'hindi' : 'english';
+      updateTexts();
+    }
+
+    function updateTexts() {
+      const lang = translations[currentLanguage];
+      document.querySelector('[for="username"]').textContent = lang.emailPhone;
+      document.querySelector('[for="password"]').textContent = lang.password;
+      document.querySelector('[type="checkbox"]').nextSibling.textContent = ` ${lang.remember}`;
+      document.querySelector('a.text-sm').textContent = lang.forgot;
+      document.querySelector('button[type="submit"]').textContent = lang.login;
+      document.getElementById("studentBtn").textContent = lang.student;
+      document.getElementById("adminBtn").textContent = lang.admin;
+      document.querySelector('p.mt-6').innerHTML = `${lang.register.split('Create')[0]}<a href="#" class="underline">${lang.register.split('? ')[1]}</a>`;
+      document.querySelector('button[onclick="toggleLanguage()"]').textContent = lang.switch;
+      document.getElementById('typed')._typed.strings = lang.title;
+      document.getElementById('typed')._typed.reset();
+    }
+
+    new Typed("#typed", {
+      strings: ["Welcome to Campus-Nivaas", "Student Living Hub "],
+      typeSpeed: 60,
+      backSpeed: 30,
+      loop: true,
+    });
+
+    VanillaTilt.init(document.querySelector(".lamp-style"), {
+      max: 25,
+      speed: 400,
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const error = document.getElementById("error");
+      error.textContent = "";
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^\d{10}$/;
+
+      if (!emailRegex.test(username) && !phoneRegex.test(username)) {
+        error.textContent = "❌ Please enter a valid email or phone number";
+        return;
+      }
+
+      if (loginType === 'student') {
+        if (password.length < 6) {
+          error.textContent = currentLanguage === 'english'
+            ? "❌ Student password must be at least 6 characters"
+            : "❌ छात्र पासवर्ड कम से कम 6 वर्णों का होना चाहिए";
+          return;
+        }
+        alert(`✅ Student logged in successfully as ${username}`);
+      } else {
+        if (password !== "Admin@123") {
+          error.textContent = currentLanguage === 'english'
+            ? "❌ Invalid admin password"
+            : "❌ अमान्य व्यवस्थापक पासवर्ड";
+          return;
+        }
+        alert(`✅ Admin logged in successfully`);
+      }
+    });
+  </script>
+  <script>
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const error = document.getElementById("error");
+    error.textContent = "";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!emailRegex.test(username) && !phoneRegex.test(username)) {
+      error.textContent = "❌ Please enter a valid email or phone number";
+      return;
+    }
+
+    if (loginType === 'student') {
+      if (password.length < 6) {
+        error.textContent = currentLanguage === 'english'
+          ? "❌ Student password must be at least 6 characters"
+          : "❌ छात्र पासवर्ड कम से कम 6 वर्णों का होना चाहिए";
+        return;
+      }
+      // ✅ Redirect to main page after successful student login
+      window.location.href = "main.html";
+    } else {
+      if (password !== "Admin@123") {
+        error.textContent = currentLanguage === 'english'
+          ? "❌ Invalid admin password"
+          : "❌ अमान्य व्यवस्थापक पासवर्ड";
+        return;
+      }
+      // ✅ Redirect to admin view (still main.html, but you can show Admin tab active)
+      window.location.href = "main.html?admin=true";
+    }
+  });
+</script>
+
+</body>
+
+</html>

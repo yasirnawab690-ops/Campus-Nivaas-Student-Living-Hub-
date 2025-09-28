@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About StudentStay & Team</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(120deg, #dbeafe, #fdf2f8, #ecfdf5);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease infinite;
+      color: #0f172a;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ===== About Section ===== */
+    .about {
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .about h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      display: inline-block;
+      background: linear-gradient(90deg, #2563eb, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .about h2::after {
+      content: "";
+      width: 70%;
+      height: 4px;
+      background: linear-gradient(90deg, #22d3ee, #3b82f6);
+      display: block;
+      margin: 0.6rem auto 0;
+      border-radius: 3px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      max-width: 1100px;
+      margin: auto;
+      text-align: left;
+    }
+
+    .about-card {
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 12px 35px rgba(0,0,0,.1);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 180deg, #60a5fa, #22d3ee, #34d399, #f472b6, #60a5fa);
+      animation: rotate 6s linear infinite;
+      z-index: 0;
+      opacity: 0.15;
+    }
+
+    .about-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.15);
+    }
+
+    .about-card h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .about-card p, .about-card ul {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #334155;
+      position: relative;
+      z-index: 1;
+    }
+
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .features li {
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .features li::before {
+      content: "✔";
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ===== Team Section ===== */
+    .team {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .team h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      display: inline-block;
+      background: linear-gradient(90deg, #3b82f6, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .team h2::after {
+      content: "";
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, #22d3ee, #60a5fa);
+      display: block;
+      margin: 0.6rem auto 0;
+      border-radius: 3px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,.08);
+      backdrop-filter: blur(8px);
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,.15);
+    }
+
+    .card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 2px solid #38bdf8;
+    }
+
+    .name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    .phone {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg,#60a5fa,#22d3ee);
+      color: #0b1220;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- About Section -->
+  <section class="about">
+    <h2>About <span>StudentStay</span></h2>
+    <div class="about-grid">
+      <!-- Our Mission -->
+      <div class="about-card">
+        <h3>Our Mission</h3>
+        <p>
+          StudentStay was founded with the mission to make student accommodation 
+          search easy, safe and transparent. We understand the challenges students 
+          face when moving to a new city for education.
+        </p>
+        <p>
+          Our platform connects students with verified accommodation providers and 
+          helps them find the perfect place to stay near their college or university.
+        </p>
+      </div>
+      <!-- Why Choose Us -->
+      <div class="about-card">
+        <h3>Why Choose Us?</h3>
+        <ul class="features">
+          <li>Verified listings with real photos</li>
+          <li>Gender-specific filters for safety</li>
+          <li>Detailed information about facilities</li>
+          <li>Honest reviews from fellow students</li>
+          <li>24/7 customer support</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="team">
+    <h2>Our Team Contacts</h2>
+    <div class="grid">
+      <!-- Member 1 -->
+      <div class="card">
+        <img src="images/yasi.png" alt="Member 1">
+        <div class="name">Yasir Ali zakir Ali</div>
+        <div class="phone">📞 +91 95187 09434</div>
+        <a href="tel:+9195187 09434" class="btn">Call</a>
+      </div>
+      <!-- Member 2 -->
+      <div class="card">
+        <img src="images/sak.jpg" alt="Member 2">
+        <div class="name">Sakshi Patel</div>
+        <div class="phone">📞 +91 86982 62696</div>
+        <a href="tel:+9186982 62696" class="btn">Call</a>
+      </div>
+      <!-- Member 3 -->
+      <div class="card">
+        <img src="images/pran.png" alt="Member 3">
+        <div class="name">Pranjali Bijwe</div>
+        <div class="phone">📞 +91 77760 41600</div>
+        <a href="tel:+9177760 41600" class="btn">Call</a>
+      </div>
+      <!-- Member 4 -->
+      <div class="card">
+        <img src="images/dnyanoba.jpg" alt="Member 4">
+        <div class="name">Dnyaneshwar Pimpalkar</div>
+        <div class="phone">📞 +91 87676 74230</div>
+        <a href="tel:+91987676 74230" class="btn">Call</a>
+      </div>
+      <!-- Member 5 -->
+      <div class="card">
+        <img src="images/sam.jpg" alt="Member 5">
+        <div class="name">Samiksha Raut</div>
+        <div class="phone">📞 +91 98817 46536</div>
+        <a href="tel:+9198817 46536" class="btn">Call</a>
+      </div>
+      <!-- Member 6 -->
+      <div class="card">
+        <img src="images/khu.jpg" alt="Member 6">
+        <div class="name">Khushbu Kela</div>
+        <div class="phone">📞 +91 99210 42527</div>
+        <a href="tel:+9199210 42527" class="btn">Call</a>
+      </div>
+      <!-- Member 7 -->
+      <div class="card">
+        <img src="images/praj.jpeg" alt="Member 7">
+        <div class="name">Prajwal Gabhane</div>
+        <div class="phone">📞 +91 8975793846</div>
+        <a href="tel:+9179757 93846" class="btn">Call</a>
+      </div>
+      <!-- Member 8 -->
+      <div class="card">
+        <img src="images/adi.jpeg" alt="Member 8">
+        <div class="name">Aditya Dhoran</div>
+        <div class="phone">📞 +91 8055271881</div>
+        <a href="tel:+91 8055271881" class="btn">Call</a>
+      </div>
+      <!-- Member 9 -->
+      <div class="card">
+        <img src="images/ish.jpg" alt="Member 9">
+        <div class="name">Ishwari Kakade</div>
+        <div class="phone">📞 +91 93229 70936</div>
+        <a href="tel:+9193229 70936" class="btn">Call</a>
+      </div>
+      <!-- Member 10 -->
+      <div class="card">
+        <img src="images/sz.jpg" alt="Member 10">
+        <div class="name">Sheikh Zaid</div>
+        <div class="phone">📞 +91 97304 13371</div>
+        <a href="tel:+9197304 13371" class="btn">Call</a>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
