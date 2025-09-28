@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StudentStay — Rooms & Mess (Light Theme)</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root{
+      --surface: rgba(255, 255, 255, 0.85);
+      --border: rgba(7, 7, 7, 0.06);
+    }
+    html,body{height:100%}
+    body{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:#0b1220;
+      background: linear-gradient(180deg, #4d7fa3 0%, #4d7fa3 100%);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+    .glass{background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 20px 60px rgba(2,6,23,.05), inset 0 0 0 1px rgba(0,0,0,.02)}
+    .pill{background:rgba(2,6,23,.04);border:1px solid var(--border)}
+    .btn{background:linear-gradient(135deg,#07adf4,#2cd3e9);color:#0b1322;font-weight:800}
+    .btn:hover{filter:brightness(1.05)}
+    .lift{transition:transform .18s ease, box-shadow .18s ease}
+    .lift:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(51, 61, 102, 0.06)}
+    .star{color:#f59e0b}
+    .tab-active{background:rgba(2,6,23,.06);border-color:#000000}
+    .badge{padding:.15rem .45rem;border-radius:.35rem;font-size:.7rem}
+    .bg-open{background:#13dd9a}
+    .bg-last{background:#f0a017}
+    .bg-closed{background:#db3030}
+    .modal{position:fixed;inset:0;background:rgba(2,6,23,.12);display:none;z-index:50;align-items:center;justify-content:center;padding:1rem}
+    .modal.show{display:flex}
+    .cursor{display:inline-block;width:10px;height:1.2rem;background:#f59e0b;margin-left:6px;animation:blink 1s steps(2,start) infinite;vertical-align:-2px}
+    @keyframes blink{50%{opacity:0}}
+    .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    .pill-rounded-full{border-radius:9999px}
+    #siteLogo{height:40px;width:auto;}
+    [class*="text-white"] { color: #0b1220 !important; }
+    *[style*="color: white" i], *[style*="color:#fff" i], *[style*="color:#ffffff" i] { color: #0b1220 !important; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="sticky top-0 z-40 backdrop-blur bg-black/5 border-b border-black/6">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="wtss.jpg" alt="StudentStay Logo" id="siteLogo"/>
+        <a href="#" class="text-xl font-extrabold"><span>Student</span><span class="text-amber-300">Stay</span></a>
+      </div>
+     
+      <div class="flex items-center gap-2">
+        <button id="langToggle" class="pill px-3 py-2 rounded text-white/80" aria-pressed="false">हिंदी</button>
+        <a href="ONE.html"> <button id="aboutBtn" class="btn px-4 py-2 rounded">About</button></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="py-14 text-center">
+    <h1 class="text-4xl font-extrabold">Campus Nivaas - Student Living Hub<span class="cursor" aria-hidden="true"></span></h1>
+    <p id="heroSub" class="text-white/80 mt-3">Your Choice Your Comfort Rooms & Mess with Every Facility You Need</p>
+  </section>
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-1 gap-10">
+
+      <!-- Rooms Section -->
+      <section id="tab-rooms" class="glass rounded-2xl p-6 lift" aria-labelledby="rooms-heading">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="rooms-heading" class="text-2xl font-bold" data-i18n="roomsTitle">All Rooms</h2>
+          <div class="flex gap-2">
+            <button class="pill px-3 py-2 rounded tab-active" data-tab="rooms">Rooms</button>
+            <button class="pill px-3 py-2 rounded" data-tab="mess">Mess</button>
+            <button class="pill px-3 py-2 rounded" data-tab="admin">Admin</button>
+          </div>
+        </div>
+        <form id="roomFilters" class="grid grid-cols-1 md:grid-cols-6 gap-3" aria-label="Room filters">
+          <select name="q" class="pill px-3 py-2 rounded">
+            <option value="">Select Location</option>
+            <option>Near Rangoli Lawn</option>
+            <option>Pote Township</option>
+            <option>Ramchandra Nagar</option>
+          </select>
+          <select name="priceRange" class="pill px-3 py-2 rounded">
+            <option disabled selected>Price Range</option>
+            <option value="1500-2000">₹1500 – ₹2000</option>
+            <option value="2000-2500">₹2000 – ₹2500</option>
+            <option value="2500-3000">₹2500 – ₹3000</option>
+          </select>
+          <select name="gender" class="pill px-3 py-2 rounded">
+            <option value="ANY">Gender</option>
+            <option value="BOYS">Boys</option>
+            <option value="GIRLS">Girls</option>
+          </select>
+          <select name="Bed" class="pill px-3 py-2 rounded">
+            <option value="Bed Available">Bed available</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+          <select name="distance" class="pill px-3 py-2 rounded">
+            <option value="">Distance</option>
+            <option>1</option><option>2</option><option>3</option>
+          </select>
+          <button type="submit" class="btn px-4 py-2 rounded md:col-span-1 col-span-1">Apply</button>
+        </form>
+        <div id="roomsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6" aria-live="polite"></div>
+        <div class="flex justify-center mt-6">
+          <button id="loadMoreRooms" class="btn px-6 py-3 rounded hidden">Load More</button>
+        </div>
+      </section>
+
+      <!-- Mess Section -->
+      <section id="tab-mess" class="glass rounded-2xl p-6 lift hidden" aria-labelledby="mess-heading">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="mess-heading" class="text-2xl font-bold" data-i18n="messTitle">All Mess</h2>
+          <div class="flex gap-2">
+            <button class="pill px-3 py-2 rounded" data-tab="rooms">Rooms</button>
+            <button class="pill px-3 py-2 rounded tab-active" data-tab="mess">Mess</button>
+            <button class="pill px-3 py-2 rounded" data-tab="admin">Admin</button>
+          </div>
+        </div>
+        <form id="messFilters" class="grid grid-cols-1 md:grid-cols-6 gap-3" aria-label="Mess filters">
+          <select name="q" class="pill px-3 py-2 rounded">
+            <option value="">Select Location</option>
+            <option>Near Rangoli Lawn</option>
+            <option>Pote Township</option>
+            <option>Ramchandra Nagar</option>
+          </select>
+          <select name="priceRange" class="pill px-3 py-2 rounded">
+            <option disabled selected>Price Range</option>
+            <option value="1500-2000">₹1500 – ₹2000</option>
+            <option value="2000-2500">₹2000 – ₹2500</option>
+            <option value="2500-3000">₹2500 – ₹3000</option>
+          </select>
+          <select name="food" class="pill px-3 py-2 rounded">
+            <option value="">Types of Food</option>
+            <option value="VEG">Vegetarian</option>
+            <option value="NONVEG">Non-Vegetarian</option>
+            <option value="Veg & Non-Veg">Veg & Non-Veg</option>
+          </select>
+          <select name="Services" class="pill px-3 py-2 rounded">
+            <option value="Services">Services</option>
+            <option value="Tiffin">Tiffin</option>
+            <option value="In house">In house</option>
+          </select>
+          <select name="distance" class="pill px-3 py-2 rounded">
+            <option value="Distance">Distance</option>
+            <option>1</option><option>2</option><option>3</option>
+          </select>
+          <button type="submit" class="btn px-4 py-2 rounded md:col-span-1 col-span-1">Apply</button>
+        </form>
+        <div id="messList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6" aria-live="polite"></div>
+        <div class="flex justify-center mt-6">
+          <button id="loadMoreMess" class="btn px-6 py-3 rounded hidden">Load More</button>
+        </div>
+      </section>
+      <section id="tab-admin" class="glass rounded-2xl p-6 lift hidden" aria-labelledby="admin-heading">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="admin-heading" class="text-2xl font-bold">Admin Analytics</h2>
+          <div class="flex gap-2">
+            <button class="pill px-3 py-2 rounded" data-tab="rooms">Rooms</button>
+            <button class="pill px-3 py-2 rounded" data-tab="mess">Mess</button>
+            <button class="pill px-3 py-2 rounded tab-active" data-tab="admin">Admin</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-white/5">
+              <tr>
+                <th class="text-left p-3">Property</th>
+                <th class="text-left p-3">Type</th>
+                <th class="text-left p-3">Views</th>
+                <th class="text-left p-3">Bookings</th>
+              </tr>
+            </thead>
+            <tbody id="adminTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ...MODALS AND REST OF PAGE UNCHANGED... (copy your original here) ... -->
+
+   <!-- Detail Modal -->
+  <div id="detailModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="detailTitle">
+    <div class="glass rounded-xl max-w-4xl w-full overflow-hidden">
+      <div class="flex items-center justify-between p-4 border-b border-black/6">
+        <h3 id="detailTitle" class="text-xl font-bold"></h3>
+        <button id="closeDetail" class="pill px-3 py-2 rounded text-white/80 hover:text-white" aria-label="Close details"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="grid md:grid-cols-2 gap-0">
+        <div id="detailMedia" class="h-72 md:h-full overflow-hidden bg-black/10"></div>
+        <div class="p-4">
+          <div class="text-sky-300 font-extrabold text-xl" id="detailPrice"></div>
+          <div class="mt-1 text-white/80" id="detailAddress"></div>
+          <div class="mt-2">vacancy: <span id="detailAvail" class="font-semibold"></span></div>
+          <ul id="detailAmenities" class="mt-3 flex flex-wrap gap-2 text-sm"></ul>
+          <div class="mt-4 flex gap-2">
+            <a id="detailCall" class="btn px-4 py-2 rounded" target="_self" rel="noopener"><i class="fa-solid fa-phone mr-1"></i>Call</a>
+            <a id="detailWA" class="btn px-4 py-2 rounded bg-gradient-to-r from-emerald-300 to-emerald-200 text-slate-900" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp</a>
+            <button id="detailBook" class="btn px-4 py-2 rounded ml-auto">Book</button>
+          </div>
+          <p id="detailDesc" class="text-white/80 mt-4"></p>
+
+          <!-- Reviews -->
+          <div class="mt-6">
+            <h4 class="font-semibold mb-2">Reviews</h4>
+            <div id="reviewList" class="space-y-2 max-h-40 overflow-auto pr-1"></div>
+            <form id="reviewForm" class="mt-3 flex gap-2" aria-label="Post review">
+              <select id="reviewRating" class="pill px-2 py-2 rounded" aria-label="Rating">
+                <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+              </select>
+              <input id="reviewText" class="pill px-3 py-2 rounded flex-1" placeholder="Write a review..." />
+              <button class="btn px-4 py-2 rounded">Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const DATA = [ /* use your full original DATA array here, unchanged */
+      {
+        id:"r1", type:"ROOM", title:"Ravindra Surandashe (Boys Room)", price:2000, gender:"Boys",
+        address:"Ramchandra Nagar", distanceKm:1,
+        amenities:["bed-yes"], desc:"Mess is available here",
+        owner:{name:"Ravindra Surandashe", phone:"9637543461"},
+         media: [{ type: "image", url: "images/ravindrasurandashe1.jpeg"}],
+        avail: 2 
+      },
+      {
+        id:"r2", type:"ROOM", title:"Harish Nimbhorkar (Boys Room)", price:2000, gender:"Boys",
+        address:"Ramchandra Nagar", distanceKm:1,
+        amenities:["bed-yes"], desc:"Mess is available here",
+        owner:{name:"Harish Nimbhorkar", phone:"9765741781"},
+        media:[{type:"image", url:"images/Harishnimbhorkar1.jpeg"}],
+        avail:3 
+      },
+       {
+        id:"r3", type:"ROOM", title:"Harish Ingole (Boys Room)", price:2000, gender:"Boys",
+        address:" Ramchandra Nagar ", distanceKm:1,
+        amenities:["bed-no"], desc:"bill included",
+        owner:{name:"Harish Ingole", phone:"7020408076"},
+        media:[{type:"image", url:"images/HarishIngole1.jpeg"}],
+        avail:3
+      },
+      {
+        id:"r4", type:"ROOM", title:"Shraddha Butte (Boys Room)", price:1800, gender:"Boys",
+        address:"Ramchandra Nagar", distanceKm:1,
+        amenities:["bed-No"], desc:"",
+        owner:{name:"Shraddha Butte", phone:"7719934000"},
+         media:[{type:"image", url:"images/ShraddhaButte1 .jpg"}],
+        avail:7
+      },
+      {
+        id:"r5", type:"ROOM", title:"Swati Pundekar (Girls Room)", price:2000, gender:"Girls",
+        address:"Ramchandra Nagar", distanceKm:1,
+        amenities:["bed-yes"], desc:"Water bore, RO Water, Mess is available",
+        owner:{name:"Swati Pundekar", phone:"9665614749"},
+        media:[{type:"image", url:"images/swatipundekar1.png"}],
+        avail:3 
+      },
+      {
+        id:"r6", type:"ROOM", title:"Pallavi Pache (Girls Room)", price:2000, gender:"Girls",
+        address:"Ramchandra Nagar", distanceKm:1,
+        amenities:["bed-yes"], desc:"Bill included",
+        owner:{name:"Pallavi Pache", phone:"9175559211"},
+        media:[{type:"image", url:"images/pallavipache1.png"}],
+        avail:3
+      },
+      {
+        id:"r7", type:"ROOM", title:"Gajanan Lande (Boys Room)", price:1500, gender:"Boys",
+        address:"Samta Colony", distanceKm:1,
+        amenities:["bed-yes"], desc:"Only light and fan",
+        owner:{name:"Gajanan Lande", phone:"9834825121"},
+        media:[{type:"image", url:"images/gajananlande1.png"}],
+        avail:4
+      },
+      {
+        id:"r8", type:"ROOM", title:"Anjali Kharode (Girls Room)", price:2000, gender:"Girls",
+        address:" Near rangoli lawn  ", distanceKm:2,
+        amenities:["bed-no"], desc:"bill including,inverter,bore water",
+        owner:{name:"Anjali Kharode", phone:"9403391693"},
+        media:[{type:"image", url:"images/anjalikharode1.jpeg"}],
+        avail:4
+       },
+       {
+        id:"r9", type:"ROOM", title:"Pravin Ladhe (Boys Room)", price:1800, gender:"boys",
+        address:"Behind Kitukale Hospital ", distanceKm:2,
+        amenities:["bed-yes"], desc:"Mess is available here",
+        owner:{name:"Pravin Ladhe", phone:"7020985398"},
+        media:[{type:"image", url:"images/pravinladhe1.jpeg"}],
+        avail:6
+      },
+      {
+        id:"r10", type:"ROOM", title:"Ruprao Laybar (Girls Room)", price:1800, gender:"Girls",
+        address:"Behind Kitukale Hospital", distanceKm:2,
+        amenities:["bed-No"], desc:"",
+        owner:{name:"Ruprao Laybar", phone:"9130845013"},
+        media:[{type:"image", url:"images/rupraolaybar1.png"}],
+        avail:5
+      },
+      {
+        id:"r11", type:"ROOM", title:"Sagar Chavhan (Girls Room)", price:1500, gender:"Girls",
+        address:"Behind Kitukale Hospital", distanceKm:2,
+        amenities:["bed-no"], desc:"bill including,cooler,",
+        owner:{name:"Sagar Chavhan", phone:"9325030855"},
+        media:[{type:"image", url:"images/sagarchavan1.jpg"}],
+        avail:5
+       },
+      {
+        id:"r12", type:"ROOM", title:"Vaishali Kawde (Boys Room)", price:1500, gender:"Boys",
+        address:"Behind Kitukale Hospital", distanceKm:2,
+        amenities:["bed-no"], desc:"bill including,gyser",
+        owner:{name:"Vaishali Kawde", phone:"8600197529"},
+        media:[{type:"image", url:"images/vaishalikawde1.png"}],
+        avail:2
+      },
+      {
+        id:"r13", type:"ROOM", title:"Om Malasne (Boys Room)", price:2000, gender:"Boys",
+        address:"Behind Kitukale Hospital", distanceKm:2,
+        amenities:["bed-No"], desc:"2 rooms available",
+        owner:{name:"Om Malasne", phone:"7972175719"},
+        media:[{type:"image", url:"images/ommalasane1.png"}],
+        avail:4
+      },
+      {
+        id:"r14", type:"ROOM", title:"Rajni Thote (Girls Room)", price:1500, gender:"Girls",
+        address:"Anand Sagar, Pote Township", distanceKm:2,
+        amenities:["bed-No"], desc:"common bathroom",
+        owner:{name:"Rajni Thote", phone:"9421509712"},
+        media:[{type:"image", url:"images/rajnithote1.png"}],
+        avail:1
+      },
+      {
+        id:"r15", type:"ROOM", title:"Parag Kshirsagar (Boys Room)", price:2000, gender:"Boys",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Parag Kshirsagar", phone:"7517728507"},
+       media:[{type:"image", url:"images/paragkshirsagar1.jpeg"}],
+        avail:3 
+       },
+      {
+        id:"r16", type:"ROOM", title:"Manish Wankhade (Boys Room)", price:2000, gender:"Boys",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-yes"], desc:"---",
+        owner:{name:"Manish Wankhade", phone:"9623475690"},
+        media:[{type:"image", url:"images/manishwankhade1.png"}],
+        avail:5
+      },
+      {
+        id:"r17", type:"ROOM", title:"Gopalkrushna Murhekar (Boys Room)", price:2100, gender:"Boys",
+        address:"Pote Township No.5  ", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Gopalkrishna Murhekar", phone:"9420522992"},
+        media:[{type:"image", url:"images/Gopalkrushna Murhekar1.jpg"}],
+        avail:4 
+      },
+      {
+        id:"r18", type:"ROOM", title:"Pravin Bijwe (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-No"], desc:"Geyser,bore water",
+        owner:{name:"Pravin Bijwe", phone:"9890184889"},
+        media:[{type:"image", url:"images/pravinbijwe1.png"}],
+        avail:3
+      },
+      {
+        id:"r19", type:"ROOM", title:"Satish Umale (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"bill included",
+        owner:{name:"Satish Umale ", phone:"9309310031"},
+        media:[{type:"image", url:"images/SatishUmale1.jpg"}],
+        avail:5
+      },
+      {
+        id:"r20", type:"ROOM", title:"Gaurav Surjuse (Boys Room)", price:2000, gender:"Boys",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-yes"], desc:"bill included",
+        owner:{name:"Gaurav Surjuse", phone:"7083102883"},
+        media:[{type:"image", url:"images/GauravSurjuse1.jpg"}],
+        avail:4 
+      },
+       {
+        id:"r21", type:"ROOM", title:"Sachin Dindekar (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Sachin Dindekar", phone:"9420283708"},
+        media:[{type:"image", url:"images/sachindindekar1.png"}],
+        avail:3
+      },
+      {
+        id:"r22", type:"ROOM", title:"Narhari Subbrao (Boys Room)", price:2000, gender:"Boys",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Narhari Subbrao", phone:"9890813156"},
+        media:[{type:"image", url:"images/narharisubbarao1.png"}],
+        avail:2
+      },
+       {
+        id:"r23", type:"ROOM", title:"Madhuri Warkari (Girls Room)", price:2500, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"inverter,Bill included",
+        owner:{name:"Madhuri Warkari", phone:"8275881058"},
+        media:[{type:"image", url:"images/madhuriwarkari1.png"}],
+        avail:2
+      },
+      {
+        id:"r24", type:"ROOM", title:"Hemant Dhanbhar (Boys Room)", price:2200, gender:"Boys",
+        address:"Pote Township", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Hemant Dhanbhar", phone:"9665046607"},
+        media:[{type:"image", url:"images/hemantdhanbhar1.png"}],
+        avail:4
+      },
+      {
+        id:"r25", type:"ROOM", title:"Sanskrut Thorat (Girls Room),", price:1700, gender:"Girls",
+        address:"Pote Township", distanceKm:2,
+        amenities:["bed-no"], desc:"Bill included",
+        owner:{name:"Sanskrut Thorat", phone:"9766746478"},
+        media:[{type:"image", url:"images/sanskrutthorat1.png"}],
+        avail:2
+      },
+      {
+        id:"r26", type:"ROOM", title:"Joshna Chakule (Girls Room)", price:1800, gender:"Girls",
+        address:"Pote Township", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Joshna Chakule", phone:"9890773060"},
+        media:[{type:"image", url:"images/JoshnaChakule1.jpg"}],
+        avail:3
+      },
+       {
+        id:"r27", type:"ROOM", title:"Satyavir Dhembare (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township", distanceKm:2,
+        amenities:["bed-no"], desc:"Inverter Available, Bore Water",
+        owner:{name:"Satyavir Dhembare", phone:"9822270405"},
+        media:[{type:"image", url:"images/satyavirdhembare1.png"}],
+        avail:1
+      },
+      {
+        id:"r28", type:"ROOM", title:"Sanjay Thorat (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"Bill included, Bore water, Wifi available",
+        owner:{name:"Sanjay Thorat", phone:"9270675462"},
+        media:[{type:"image", url:"images/SanjayThorat1.jpg"}],
+        avail:6
+      },
+       {
+        id:"r29", type:"ROOM", title:"Rekha Charjan (Girls Room)", price:2000, gender:"Girls",
+        address:"Pote Township No.5", distanceKm:2,
+        amenities:["bed-no"], desc:"Bill included, Bore water",
+        owner:{name:"Rekha Charjan", phone:"9420283721"},
+        media:[{type:"image", url:"images/rekhacharjan1.png"}],
+        avail:4
+      },
+      {
+        id:"r30", type:"ROOM", title:"Shubham Kale (Boys Room)", price:1600, gender:"Boys",
+        address:" near rangoli lawn  ", distanceKm:2,
+        amenities:["bed-no"], desc:"Bore Water",
+        owner:{name:"Shubham Kale", phone:"7972082867"},
+        media:[{type:"image", url:"images/shubhamkale1.jpeg"}],
+        avail:4
+      },
+      {
+        id:"r31", type:"ROOM", title:"Prashant Pund", price:2200, gender:"Boys",
+        address:"Kampaliya Layout", distanceKm:2,
+        amenities:["bed-no"], desc:"---",
+        owner:{name:"Prashant Pund", phone:"8830839040"},
+        media:[{type:"image", url:"images/prashantpund1.png"}],
+        avail:4
+      },
+      
+      {
+        id:"m1", type:"MESS", title:"Chaudhari pure Veg Mess", price:2800, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["In house"], desc:"Vegetarian mess(dine in/dine out)",
+        owner:{name:"Sanjay Chaudhari", phone:"9405311203"},
+       media: [{ type: "image", url: "images/mess4.jpeg"}],
+       avail:15
+      },
+      {
+        id:"m2", type:"MESS", title:"Shree ganesh Mess", price:2200, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["In house"], desc:"Vegetarian mess,only for boys",
+        owner:{name:"Pravin Ladhe", phone:"7020985398"},
+        media: [{ type: "image", url: "images/mess5.jpeg"}],
+        avail:13
+        
+      },
+      {
+        id:"m3", type:"MESS", title:"Nimborkar Vegetarian Mess", price:2300, food:"VEG",
+        address:"Ramchandra Nagar", distanceKm:2,
+        amenities:["Tiffin"], desc:"Vegetarian mess,only for boys",
+        owner:{name:" Harish Nimborkar", phone:"9765741781"},
+        media: [{ type: "image", url: "images/mess6.jpeg"}],
+        avail:1
+      },
+      
+      {
+        id:"m4", type:"MESS", title:" pund Vegetarian Mess", price:2200, food:"VEG",
+        address:"Ramchandra Nagar", distanceKm:2,
+        amenities:["In house"], desc:"25 candidates acceptable for mess",
+        owner:{name:"Prashant  pund ", phone:"8830839040"},
+        media: [{ type: "image", url: "images/mess8.jpeg"}],
+        avail:10
+      },
+      {
+        id:"m5", type:"MESS", title:"pundekar Mess", price:2000, food:"VEG",
+        address:"Ramchandra Nagar", distanceKm:2,
+        amenities:["Tiffin"], desc:"Vegetarian mess,only for girls",
+        owner:{name:"Swati pundekar", phone:"9665614749"},
+        media: [{ type: "image", url: "images/mess1.jpeg"}],
+       avail:9
+      },
+      {
+        id:"m6", type:"MESS", title:"Mauli mess", price:2500, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["WATER"], desc:"Vegetarian mess",
+        owner:{name:"Arun patil", phone:"9860487605"},
+        media: [{ type: "image", url: "images/mess3.jpeg"}],
+        avail:10
+      },
+      
+      {
+        id:"m7", type:"MESS", title:"Harshita mess", price:2200, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["Tiffin"], desc:"Vegetarian mess",
+        owner:{name:"Pavan Gupta ", phone:"9766237321"},
+        media: [{ type: "image", url: "images/mess5.jpeg"}],
+        avail:10
+      },
+       {
+        id:"m8", type:"MESS", title:"A-1 mess", price:2200, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["In house"], desc:"Vegetarian mess",
+        owner:{name:"Vijay Chadhar", phone:"9860105927"},
+        media: [{ type: "image", url: "images/mess3.jpeg"}],
+        avail:10
+      },
+      {
+        id:"m9", type:"MESS", title:"Shree mess", price:2200, food:"VEG",
+        address:"Near Rangoli Lawn", distanceKm:3,
+        amenities:["In house"], desc:"Vegetarian mess",
+        owner:{name:"Sanket Gupta", phone:"8208374433"},
+        media: [{ type: "image", url: "images/mess1.jpeg"}],
+        avail:10
+      },
+      {
+        id:"m10", type:"MESS", title:"Tuljabhavani mess", price:2300, food:"VEG",
+        address:"pote township", distanceKm:1,
+        amenities:["In house"], desc:"Vegetarian mess",
+        owner:{name:"Tuljabhavani mess", phone:"9529622849"},
+        media: [{ type: "image", url: "images/mess8.jpeg"}],
+        avail:10
+      },
+      {
+        id:"m11", type:"MESS", title:"Shree Gurudev mess", price:2300, food:"VEG",
+        address:"pote township", distanceKm:1,
+        amenities:["In house"], desc:"Vegetarian mess",
+        owner:{name:"Shree Gurudev mess", phone:"9595997088"},
+        media: [{ type: "image", url: "images/mess4.jpeg"}],
+        avail:10
+      },
+      
+     ];
+
+    // ---------- i18n ----------
+    let LANG = "en";
+     const T = {
+      en: {
+        roomsTitle: "All Rooms",
+        messTitle: "All Mess",
+        heroSub: "Your Choice Your Comfort Rooms & Mess with Every Facility You Need"
+      },
+      hi: {
+        roomsTitle: "सभी कमरे",
+        messTitle: "सभी मेस",
+        heroSub: "आपकी पसंद आपकी सुविधा कमरे और मेस आपकी ज़रूरत की हर सुविधा के साथ"
+      }
+    };
+      
+
+    function applyI18n(){
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const key = el.getAttribute("data-i18n");
+        el.textContent = T[LANG][key] || el.textContent;
+      });
+      document.getElementById("heroSub").textContent = T[LANG].heroSub;
+      document.getElementById("langToggle").textContent = LANG==="hi" ? "English" : "हिंदी";
+      document.getElementById("langToggle").setAttribute("aria-pressed", LANG==="hi");
+    }
+
+    // ---------- Pagination State ----------
+    let roomsShown = 6;
+    let messShown = 6;
+
+    function isMobile() {
+      return window.innerWidth < 768;
+    }
+    function getRoomIncrement() {
+      return isMobile() ? 3 : 6;
+    }
+    function getMessIncrement() {
+      return isMobile() ? 3 : 6;
+    }
+
+    // ---------- Utilities ----------
+    const qs = (sel,root=document)=>root.querySelector(sel);
+    const qsa = (sel,root=document)=>[...root.querySelectorAll(sel)];
+    const fmtINR = n => "₹"+Number(n).toLocaleString("en-IN");
+    const viewKey = id => `views_${id}`;
+    const bookKey = id => `bookings_${id}`;
+    const reviewsKey = id => `reviews_${id}`;
+    const favKey = id => `fav_${id}`;
+
+    function incView(id){ const c = Number(localStorage.getItem(viewKey(id))||0)+1; localStorage.setItem(viewKey(id), String(c)); }
+    function addBooking(id){ const c = Number(localStorage.getItem(bookKey(id))||0)+1; localStorage.setItem(bookKey(id), String(c)); }
+    function getViews(id){ return Number(localStorage.getItem(viewKey(id))||0); }
+    function getBookings(id){ return Number(localStorage.getItem(bookKey(id))||0); }
+    function isFav(id){ return localStorage.getItem(favKey(id)) === "1"; }
+    function toggleFav(id){
+      const state = isFav(id) ? "0" : "1";
+      localStorage.setItem(favKey(id), state);
+      return state === "1";
+    }
+
+     // ---------- Rendering ----------
+    function cardTemplate(p){
+      const availCls = p.avail > 1 
+        ? "bg-open" 
+        : (p.avail === 1 ? "bg-last" : "bg-closed");
+      const badgeTxt = p.avail > 1 
+        ? "Available" 
+        : (p.avail === 1 ? "Last" : "Not-Available");
+      const media = p.media?.[0];
+      const fav = isFav(p.id) ? "fas" : "far";
+      const amenitiesHtml = (p.amenities||[]).slice(0,4).map(a=>`<span class="pill px-2 py-1 rounded">${a}</span>`).join("") || `<span class="text-white/60">No amenities listed</span>`;
+      return `
+        <article class="glass rounded-xl overflow-hidden lift" role="article" aria-labelledby="title_${p.id}">
+          <div class="relative">
+            ${media?.type==="image"
+              ? `<img src="${media.url}" alt="${p.title}" class="w-full h-48 object-cover">`
+              : `<video src="${media.url}" class="w-full h-48 object-cover" muted autoplay loop playsinline></video>`}
+            <span class="badge ${p.avail===1?'bg-last':availCls} absolute top-3 right-3">${badgeTxt}</span>
+            <button data-fav="${p.id}" class="pill w-9 h-9 rounded-full grid place-items-center absolute top-3 left-3 text-white/90" aria-label="Toggle favorite">
+              <i class="${fav} fa-heart"></i>
+            </button>
+          </div>
+          <div class="p-4">
+            <div class="flex justify-between items-start">
+              <h3 id="title_${p.id}" class="font-semibold">${p.title}</h3>
+              <span class="text-sky-300 font-bold">${fmtINR(p.price)}/mo</span>
+            </div>
+            <p class="text-white/70 text-sm mt-1"><i class="fa-solid fa-location-dot text-sky-300 mr-1"></i>${p.address} • ${p.distanceKm} km</p>
+            <div class="flex flex-wrap gap-2 text-xs mt-3">
+              ${amenitiesHtml}
+            </div>
+            <div class="mt-3 flex items-center gap-2">
+              <a href="tel:${p.owner.phone}" class="btn px-3 py-1.5 rounded"><i class="fa-solid fa-phone mr-1"></i>Call</a>
+              <a href="https://wa.me/91${p.owner.phone}" target="_blank" rel="noopener" class="btn px-3 py-1.5 rounded bg-gradient-to-r from-emerald-300 to-emerald-200 text-slate-900"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp</a>
+              <button data-open="${p.id}" class="ml-auto text-sky-300 hover:underline">View Details →</button>
+            </div>
+          </div>
+        </article>`;
+    }
+    function parseNumber(value, fallback=0){
+      if(value===null || value===undefined) return fallback;
+      const n = Number(String(value).replace(/[^\d.]/g,""));
+      return Number.isFinite(n) ? n : fallback;
+    }
+    function getRangeFromSelect(select) {
+      if (!select) return [0, Number.MAX_SAFE_INTEGER];
+      const val = select.value || "";
+      const m = val.match(/(\d+)[^\d]+(\d+)/);
+      return m ? [+m[1], +m[2]] : [0, Number.MAX_SAFE_INTEGER];
+    }
+    function applyRoomFilters(list, form) {
+  const fd = new FormData(form);
+  const q = (fd.get("q")||"").toString().toLowerCase();
+  const [min, max] = getRangeFromSelect(form.querySelector('[name="priceRange"]'));
+  const gender = (fd.get("gender")||"ANY").toString().toUpperCase();
+  const amenities = (fd.get("amenities")||"")
+    .toString()
+    .toUpperCase()
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+  const dist = parseNumber(fd.get("distance"), 0);
+
+  return list.filter(p =>
+    p.type === "ROOM" &&
+    p.price >= min && p.price <= max &&
+    (gender === "ANY" || (p.gender||"").toUpperCase() === gender) &&
+    (q === "" || (p.address||"").toLowerCase().includes(q) || (p.title||"").toLowerCase().includes(q)) &&
+    (!dist || p.distanceKm <= dist) &&
+    (!amenities.length || amenities.every(a => (p.amenities||[]).map(x => x.toUpperCase()).includes(a)))
+  );
+
+    }
+    function applyMessFilters(list, form){
+      const fd = new FormData(form);
+      const q = (fd.get("q")||"").toString().toLowerCase();
+      const [min, max] = getRangeFromSelect(form.querySelector('[name="priceRange"]'));
+      const food = (fd.get("food")||"").toString().toUpperCase();
+      const dist = parseNumber(fd.get("distance"), 0);
+      return list.filter(p =>
+        p.type==="MESS" &&
+        p.price>=min && p.price<=max &&
+        (!food || (p.food||"").toUpperCase().includes(food)) &&
+        (q==="" || (p.address||"").toLowerCase().includes(q) || (p.title||"").toLowerCase().includes(q)) &&
+        (!dist || p.distanceKm<=dist)
+      );
+    }
+
+    // --- Show More Logic ---
+    function renderRooms() {
+      const out = qs("#roomsList");
+      const loadMoreBtn = qs("#loadMoreRooms");
+      const filtered = applyRoomFilters(DATA, qs("#roomFilters"));
+      const visible = filtered.slice(0, roomsShown);
+      out.innerHTML = visible.map(cardTemplate).join("") || `<div class="text-white/70">No rooms found.</div>`;
+      if (filtered.length > roomsShown) {
+        loadMoreBtn.classList.remove("hidden");
+      } else {
+        loadMoreBtn.classList.add("hidden");
+      }
+    }
+    function renderMess() {
+      const out = qs("#messList");
+      const loadMoreBtn = qs("#loadMoreMess");
+      const filtered = applyMessFilters(DATA, qs("#messFilters"));
+      const visible = filtered.slice(0, messShown);
+      out.innerHTML = visible.map(cardTemplate).join("") || `<div class="text-white/70">No mess found.</div>`;
+      if(filtered.length > messShown) {
+        loadMoreBtn.classList.remove("hidden");
+      } else {
+        loadMoreBtn.classList.add("hidden");
+      }
+    }
+
+    // Update list size on resize for mobile/desktop switches
+    window.addEventListener('resize', () => { renderRooms(); renderMess(); });
+
+    qs("#loadMoreRooms").addEventListener('click', function(){
+      roomsShown += getRoomIncrement();
+      renderRooms();
+    });
+    qs("#loadMoreMess").addEventListener('click', function(){
+      messShown += getMessIncrement();
+      renderMess();
+    });
+    qs("#roomFilters").addEventListener("submit", e=>{
+      e.preventDefault();
+      roomsShown = getRoomIncrement();
+      renderRooms();
+    });
+    qs("#messFilters").addEventListener("submit", e=>{
+      e.preventDefault();
+      messShown = getMessIncrement();
+      renderMess();
+    });
+
+    // Tab/tab-button logic
+    function setTab(name){
+      ["rooms","mess","admin"].forEach(t=>{
+        qs(`#tab-${t}`).classList.toggle("hidden", t!==name);
+        qsa("[data-tab]").forEach(b=>{
+          if(b.getAttribute("data-tab")===t){
+            b.classList.toggle("tab-active", t===name);
+          }
+        });
+      });
+      if(name==="rooms"){
+        roomsShown = getRoomIncrement();
+        renderRooms();
+      }
+      if(name==="mess"){
+        messShown = getMessIncrement();
+        renderMess();
+      }
+      if(name==="admin") refreshAdmin();
+    }
+    qsa("[data-nav]").forEach(b=>b.addEventListener("click",()=>setTab(b.getAttribute("data-nav"))));
+    qsa("[data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.getAttribute("data-tab"))));
+
+    // Initial render
+    roomsShown = getRoomIncrement();
+    messShown = getMessIncrement();
+    renderRooms();
+    renderMess();
+    applyI18n();
+
+    // --- The rest of your original MODAL/Admin/Detail operations unchanged ---
+    // ... (modal detail, review, booking, admin analytics, etc) ...
+
+    // ---------- Detail Modal ----------
+    let currentId = null;
+    function openDetail(id){
+      currentId = id;
+      const p = DATA.find(x=>x.id===id);
+      if(!p) return;
+      incView(id);
+
+      qs("#detailTitle").textContent = p.title;
+      qs("#detailPrice").textContent = `${fmtINR(p.price)}/mo`;
+      qs("#detailAddress").textContent = `${p.address} • ${p.distanceKm} km`;
+      qs("#detailAvail").textContent = p.avail;
+      qs("#detailDesc").textContent = p.desc;
+      qs("#detailCall").href = `tel:${p.owner.phone}`;
+      qs("#detailWA").href = `https://wa.me/91${p.owner.phone}`;
+
+      // media
+      const m = qs("#detailMedia");
+      m.innerHTML = "";
+      p.media.forEach(mm=>{
+        if(mm.type==="image"){
+          const img = document.createElement("img");
+          img.src = mm.url; img.alt=p.title; img.className="w-full h-full object-cover";
+          m.appendChild(img);
+        } else {
+          const v = document.createElement("video");
+          v.src = mm.url; v.controls = true; v.className="w-full h-full object-cover";
+          m.appendChild(v);
+        }
+      });
+
+      // amenities
+      const a = qs("#detailAmenities");
+      a.innerHTML = (p.amenities||[]).map(x=>`<li class="pill-rounded-full pill px-3 py-1 rounded-full">${x}</li>`).join("") || `<li class="text-white/60">No amenities listed</li>`;
+
+      // reviews
+      renderReviews(id);
+
+      qs("#detailModal").classList.add("show");
+      qs("#detailModal").setAttribute("aria-hidden","false");
+      refreshAdmin();
+      setTimeout(()=>qs("#closeDetail").focus(), 80);
+    }
+
+    function closeDetail(){
+      qs("#detailModal").classList.remove("show");
+      qs("#detailModal").setAttribute("aria-hidden","true");
+      currentId = null;
+    }
+
+    // ---------- Reviews ----------
+    function renderReviews(id){
+      const list = JSON.parse(localStorage.getItem(reviewsKey(id))||"[]");
+      const el = qs("#reviewList");
+      el.innerHTML = list.map(r=>`
+        <div class="pill rounded px-3 py-2">
+          <span class="star">${"★".repeat(Math.min(5, Math.max(0, r.rating)))}</span>
+          <span class="text-white/80 ml-2">${r.text}</span>
+          <span class="text-white/50 text-xs ml-2">${new Date(r.ts).toLocaleString()}</span>
+        </div>`).join("") || `<div class="text-white/60">No reviews yet.</div>`;
+    }
+
+    function submitReview(e){
+      e.preventDefault();
+      if(!currentId) return;
+      const rating = Number(qs("#reviewRating").value);
+      const text = qs("#reviewText").value.trim();
+      if(!text) return;
+      const key = reviewsKey(currentId);
+      const list = JSON.parse(localStorage.getItem(key)||"[]");
+      list.unshift({rating, text, ts: Date.now()});
+      localStorage.setItem(key, JSON.stringify(list));
+      qs("#reviewText").value = "";
+      renderReviews(currentId);
+    }
+
+    // ---------- Booking ----------
+    function bookCurrent(){
+      if(!currentId) return;
+      const p = DATA.find(x=>x.id===currentId);
+      if(!p || p.avail<=0){ alert("Not available"); return; }
+      p.avail -= 1;
+      addBooking(currentId);
+      qs("#detailAvail").textContent = p.avail;
+      renderRooms(); renderMess(); refreshAdmin();
+      alert("Booking created!");
+    }
+
+    // ---------- Admin ----------
+    function refreshAdmin(){
+      const tbody = qs("#adminTable");
+      const rows = DATA
+        .map(p=>({p, views:getViews(p.id), bookings:getBookings(p.id)}))
+        .sort((a,b)=>b.views-a.views)
+        .slice(0,15)
+        .map(({p,views,bookings})=>`
+          <tr class="border-t border-black/6">
+            <td class="p-3">${p.title}</td>
+            <td class="p-3">${p.type}</td>
+            <td class="p-3">${views}</td>
+            <td class="p-3">${bookings}</td>
+          </tr>`).join("");
+      tbody.innerHTML = rows || `<tr><td class="p-3" colspan="4">No data</td></tr>`;
+    }
+
+    // ---------- Tabs / Events ----------
+    function setTab(name){
+      ["rooms","mess","admin"].forEach(t=>{
+        qs(`#tab-${t}`).classList.toggle("hidden", t!==name);
+        qsa("[data-tab]").forEach(b=>{
+          if(b.getAttribute("data-tab")===t){
+            b.classList.toggle("tab-active", t===name);
+          }
+        });
+      });
+      if(name==="admin") refreshAdmin();
+    }
+
+    // nav
+    qsa("[data-nav]").forEach(b=>b.addEventListener("click",()=>setTab(b.getAttribute("data-nav"))));
+    qsa("[data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.getAttribute("data-tab"))));
+
+    // filters
+    qs("#roomFilters").addEventListener("submit", e=>{e.preventDefault(); renderRooms();});
+    qs("#messFilters").addEventListener("submit", e=>{e.preventDefault(); renderMess();});
+
+    // delegates: open detail + fav
+    document.addEventListener("click", (e)=>{
+      const openBtn = e.target.closest("[data-open]");
+      if(openBtn){ openDetail(openBtn.getAttribute("data-open")); return; }
+      const favBtn = e.target.closest("[data-fav]");
+      if(favBtn){
+        const id = favBtn.getAttribute("data-fav");
+        const newState = toggleFav(id);
+        const icon = favBtn.querySelector("i");
+        if(icon){
+          icon.classList.toggle("fas", newState);
+          icon.classList.toggle("far", !newState);
+        }
+        return;
+      }
+    });
+
+    // modal events
+    qs("#closeDetail").addEventListener("click", closeDetail);
+    qs("#detailModal").addEventListener("click", (e)=>{ if(e.target.id==="detailModal") closeDetail(); });
+    qs("#reviewForm").addEventListener("submit", submitReview);
+    qs("#detailBook").addEventListener("click", bookCurrent);
+    // language
+    qs("#langToggle").addEventListener("click", ()=>{ LANG = LANG==="hi" ? "en" : "hi"; applyI18n(); });
+
+    // keyboard: Escape closes modals
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape"){
+        if(qs("#detailModal").classList.contains("show")) closeDetail();
+      }
+    });
+
+    // initial render
+    renderRooms(); renderMess(); applyI18n(); refreshAdmin();
+  </script>
+
+  <!-- Runtime fixer: convert white/very-light computed text colors to dark for this light theme -->
+  <script>
+    (function fixLightText(){
+      function parseRGBA(str){
+        const m = String(str).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/);
+        if(!m) return null;
+        return {r:+m[1], g:+m[2], b:+m[3], a: m[4] ? +m[4] : 1};
+      }
+      function isLightColor(rgb){
+        if(!rgb) return false;
+        const avg = (rgb.r + rgb.g + rgb.b)/3;
+        // treat as light if average brightness >= 200 OR alpha < 1 but still very light
+        return avg >= 200 || (rgb.a < 1 && avg >= 180);
+      }
+      // run after visual updates
+      requestAnimationFrame(()=>{
+        const els = [...document.querySelectorAll('*')];
+        els.forEach(el=>{
+          try{
+            const cs = getComputedStyle(el).color;
+            const rgb = parseRGBA(cs);
+            if(isLightColor(rgb)){
+              el.style.color = '#0b1220';
+            }
+          }catch(e){}
+        });
+      });
+    })();
+  </script>
+  <!-- Fixer for light text remains unchanged -->
+</body>
+</html>
